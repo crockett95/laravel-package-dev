@@ -1,7 +1,7 @@
 <?php
 
 return array(
-    'view'  => '',
+    'view'  => 'duo::confirmation',
     'keys'  => array(
         'AKEY'  => '',
         'IKEY'  => '',

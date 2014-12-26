@@ -29,6 +29,10 @@ class DuoServiceProvider extends ServiceProvider {
 	public function register()
 	{
 		//
+        $this->app->bind('duo', function ()
+        {
+            new Duo();
+        })
 	}
 
 	/**

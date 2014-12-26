@@ -4,6 +4,7 @@ namespace Crockett95\Duo;
 
 use \Config;
 use \View;
+use \URL;
 
 use \Crockett95\Duo\DuoException;
 
@@ -141,9 +142,12 @@ class Duo
     {
         $sig = $this->sign($username, $time);
 
+        $endpoint = $endpoint ?: URL::current();
+
         return View::make($this->getConfig('view'))
             ->with('sig_request', $sig)
-            ->with('host', $this->host);
+            ->with('host', $this->host)
+            ->with('endpoint', $endpoint);
     }
 
     /**
@@ -151,13 +155,17 @@ class Duo
      */
     protected function getConfig($key)
     {
+        if (null !== Config::get("duo.$key")) {
+            return Config::get("duo.$key");
+        }
+
         return Config::get("duo::$key");
     }
 
     /**
      *
      */
-    private static function signVals($key, $vals, $prefix, $expire, $time=NULL)
+    private static function signVals($key, $vals, $prefix, $expire, $time = null)
     {
         $exp = ($time ? $time : time()) + $expire;
         $val = $vals . '|' . $exp;
@@ -170,7 +178,7 @@ class Duo
     /**
      *
      */
-    private static function parseVals($key, $val, $prefix, $time=NULL)
+    private static function parseVals($key, $val, $prefix, $time = null)
     {
         $ts = ($time ? $time : time());
         list($u_prefix, $u_b64, $u_sig) = explode('|', $val);
